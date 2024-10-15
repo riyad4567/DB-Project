@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html class="home-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="./home.css" />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <a href="index.html">Log Out</a>
+        <a href="accountinfo.html">Account Information</a>
+        <a href="Purchasehistory.html">History</a>
+        <a href="tikcetverification.html">Verify Ticket</a>
+        <a href="traininformation.html">Transport Information</a>
+        <a href="home.html">Home</a>
+      </nav>
+    </header>
+    <div class="home">
+      <form>
+        <h1>Ticket Purchase</h1>
+        <div class="content">
+          <div class="input-field">
+            <select id="from" class="input-field1">
+              <option value="" disabled selected>From Station</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <select id="to" class="input-field1">
+              <option value="" disabled selected>To Station</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <input type="date" id="date" />
+          </div>
+
+          <div class="button">
+            <input
+              type="button"
+              id="trainButton"
+              value="Search Train"
+              onclick="trainSearch()"
+            />
+            <input
+              type="button"
+              id="busButton"
+              value="Search Bus"
+              onclick="busSearch()"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="image">
+      <img src="./img/home3.png" />
+    </div>
+  </body>
+  <script>
+    const port = 3005;
+    // Get today's date
+    var today = new Date();
+    // Calculate the date for 10 days from today
+    var next10Days = new Date(today);
+    next10Days.setDate(today.getDate() + 10);
+
+    // Format the dates in yyyy-mm-dd format for the date input field
+    var formattedToday = today.toISOString().slice(0, 10);
+    var formattedNext10Days = next10Days.toISOString().slice(0, 10);
+
+    // Set the minimum and maximum date attributes for the input field
+    document.getElementById("date").setAttribute("min", formattedToday);
+    document.getElementById("date").setAttribute("max", formattedNext10Days);
+  </script>
+  <script>
+    let timer;
+
+    // Start or continue the timer
+    function startOrContinueTimer(durationInSeconds) {
+      // Check if the timer state exists in local storage
+      const storedTime = localStorage.getItem("timerRemainingTime");
+
+      if (storedTime) {
+        // Use the stored time as the initial duration
+        durationInSeconds = parseInt(storedTime);
+      }
+
+      // Clear any existing timers
+      clearInterval(timer);
+
+      // Set up a new timer
+      timer = setInterval(async function () {
+        console.log("yes");
+        // This code will run every second
+        console.log(`Time remaining: ${durationInSeconds} seconds`);
+
+        // Decrease the duration
+        durationInSeconds--;
+
+        // Store the remaining time in local storage
+        localStorage.setItem(
+          "timerRemainingTime",
+          durationInSeconds.toString()
+        );
+
+        // Check if the timer has reached 0
+        if (durationInSeconds <= 0) {
+          clearInterval(timer);
+          console.log("Timer has expired");
+          const userId = getCookie("userId");
+          const FROM = getCookie("fromstation");
+          const TO = getCookie("tostation");
+          const DATE = getCookie("date");
+          // Function to retrieve the seat booking object from the cookie
+          function getSeatBookingFromCookie() {
+            const cookieValue = getCookie("seatbook");
+            if (cookieValue) {
+              try {
+                return JSON.parse(decodeURIComponent(cookieValue));
+              } catch (error) {
+                console.error("Error parsing JSON from cookie:", error);
+              }
+            }
+            return null;
+          }
+
+          // Example: Retrieve the seat booking object from the "seatbook" cookie
+          const seatbook = getSeatBookingFromCookie();
+          const bookingstatus = getCookie("bookingstatus");
+          const result = await fetch(`http://localhost:3020/finalending`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              bookingstatus: bookingstatus,
+              FROM: FROM,
+              TO: TO,
+              DATE: DATE,
+              seatbook: seatbook,
+              userId: userId,
+            }),
+          });
+
+          // Clear the timer state from local storage
+          localStorage.removeItem("timerRemainingTime");
+        }
+      }, 1000); // Timer runs every second (1000 milliseconds)
+    }
+    // Retrieve the timer's remaining time from localStorage
+    const storedTime = localStorage.getItem("timerRemainingTime");
+
+    if (storedTime !== null) {
+      // Convert the stored time to an integer
+      const remainingTime = parseInt(storedTime);
+
+      if (!isNaN(remainingTime) && remainingTime > 0) {
+        // Start the timer with the remaining time
+        startOrContinueTimer(remainingTime);
+      } else {
+        // The stored time is invalid or expired; you can handle this case as needed
+        console.log("Invalid or expired timer data in localStorage");
+      }
+    } else {
+      // No timer data found in localStorage; you can handle this case as needed
+      console.log("No timer data found in localStorage");
+    }
+
+    function getCookie(name) {
+      const cookieValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(name))
+        ?.split("=")[1];
+      return cookieValue;
+    }
+
+    const userId = getCookie("userId");
+
+    console.log(userId);
+    function formatDateForSQL(inputDate) {
+      const months = [
+        "JAN",
+        "FEB",
+        "MAR",
+        "APR",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG",
+        "SEP",
+        "OCT",
+        "NOV",
+        "DEC",
+      ];
+
+      // Parse input date string in 'YYYY-MM-DD' format
+      const parts = inputDate.split("-");
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parts[2];
+
+      // Format the date in 'DD-MON-YYYY' format
+      const formattedDate = `${day}-${months[monthIndex]}-${year}`;
+
+      return formattedDate;
+    }
+    // Fetch data from the backend and populate the dropdowns
+    async function populateDropdowns() {
+      const userId = getCookie("userId");
+      const FROM = getCookie("fromstation");
+      const TO = getCookie("tostation");
+      const fromDropdown = document.getElementById("from");
+      const toDropdown = document.getElementById("to");
+
+      try {
+        const response = await fetch(
+          "http://localhost:3020/getstationinformation"
+        ); // Replace with your actual API endpoint
+        const data = await response.json();
+
+        data.forEach((city) => {
+          const option = document.createElement("option");
+          option.value = city.STATION_NAME; // Use a unique identifier for each city
+          option.textContent = city.STATION_NAME; // Use the name of the city
+          fromDropdown.appendChild(option);
+          toDropdown.appendChild(option.cloneNode(true)); // Clone option for "To" dropdown
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    // Call the populateDropdowns function when the page loads
+    populateDropdowns();
+
+    async function trainSearch() {
+      const FROM = document.getElementById("from").value;
+      const TO = document.getElementById("to").value;
+      const DATE = document.getElementById("date").value;
+
+      document.cookie = `fromstation=${FROM}; path=/;`;
+      document.cookie = `tostation=${TO}; path=/;`;
+      document.cookie = `date=${formatDateForSQL(DATE)}; path=/;`;
+
+      const result = await fetch("http://localhost:3020/gettrainInformation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          FROM: FROM,
+          TO: TO,
+          DATE: formatDateForSQL(DATE),
+        }),
+      });
+      const response = await result.json();
+      if (response.ok) {
+        window.location.href = "searchtrain.html";
+      } else {
+        alert("no tikcets is available");
+      }
+    }
+    async function busSearch() {
+      const FROM2 = document.getElementById("from").value;
+      const TO2 = document.getElementById("to").value;
+      const DATE2 = document.getElementById("date").value;
+
+      const text = FROM2;
+      const FROM = text.split(" ")[0];
+      const TO = TO2.split(" ")[0];
+      console.log(FROM);
+      console.log(TO);
+
+      const result = await fetch("http://localhost:3020/searchbusInformation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          FROM: FROM,
+          TO: TO,
+          DATE: formatDateForSQL(DATE2),
+        }),
+      });
+      document.cookie = `fromstation=${FROM}; path=/;`;
+      document.cookie = `tostation=${TO}; path=/;`;
+      document.cookie = `date=${formatDateForSQL(DATE2)}; path=/;`;
+      const response = await result.json();
+      if (response.ok) {
+        window.location.href = "searchbus.html";
+      } else {
+        alert("no tikcets is available");
+      }
+    }
+  </script>
+</html>

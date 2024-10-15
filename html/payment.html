@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html class="pay-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Rubik:400,700"
+    />
+    <link rel="stylesheet" href="./payment.css" />
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <a href="index.html">Log Out</a>
+        <a href="accountinfo.html">Account Information</a>
+        <a href="Purchasehistory.html">History</a>
+        <a href="traininformation.html">Transport Information</a>
+        <a href="home.html">Home</a>
+      </nav>
+    </header>
+    <h2>Purchase Ticket</h2>
+    <div class="containAll">
+      <div class="hold">
+        <div id="pay" class="pay">
+          <h3 text-align: center>Passenger Details</h3>
+          <label for="name">Passenger Name</label><br />
+          <div class="show">
+            <p id="nameShow"></p>
+          </div>
+          <div id="newlyadded">
+            <label for="choose">Passenger Type</label><br />
+            <select class="typeOption">
+              <option>Adult</option>
+              <option>Child</option>
+            </select>
+          </div>
+
+          <label for="email">Email</label><br />
+          <div class="show">
+            <p id="emailShow"></p>
+          </div>
+          <label for="phone">Phone Number</label><br />
+          <div class="show">
+            <p id="phoneShow"></p>
+          </div>
+        </div>
+        <div class="ticketInformation">
+          <h3>Fare Details</h3>
+          <!-- <label for="Tprice">Ticket Price</label><br>
+            <div class="show">
+                <p id="TicketPrice"> </p>
+            </div>
+            <label for="Tvat">VAT</label><br>
+            <div class="show">
+                <p id="TicketVat"></p>
+            </div>
+            <label for="sCharge">Service Charge</label><br>
+            <div class="show">
+                <p id="service"> </p>
+            </div>
+            <label for="total">Total</label><br>
+            <div class="show">
+                <p id="TotalCharge"> </p>
+            </div> -->
+          <p id="price">Ticket Price:</p>
+
+          <p id="vat">Vat:2%</p>
+
+          <p id="charge">Service Charge:20</p>
+
+          <p id="total">Total:</p>
+        </div>
+      </div>
+      <div class="hold2">
+        <div class="paymentDetails">
+          <!--<h3>Payment Details</h3>
+           <p id="totalCost">Total Amount Of Payment: </p> 
+
+        <pre>
+ By clicking on the "Confirm Payment" button below, you acknowledge that
+you have read and agreed to the Terms & Conditions.
+
+Please complete your payment within 15 minutes, otherwise your seat(s) will
+be cancelled.
+
+Provision for case in which tickets have been issued for trains not having
+room available for additional passenger:
+
+(1) Fares shall be deemed to be accepted, and tickets to be issued, subject
+to the condition of there being room available in the train for which the
+tickets are issued.
+
+(2) A person to whom a ticket has been issued and for whom there is not room
+available in the train for which the ticket was issued shall on returning 
+the ticket within three hours after the departure of the train be entitled
+to have his fare at once refunded.
+
+(3) A person for whom there is not room available for the class of carriage
+for which he has purchased a ticket and who is obliged to travel in a 
+carriage of a lower class shall be entitled on delivering up his ticket to 
+a refund of the difference between the fare paid by him and the fare payable
+for the class of carriage in which he traveled. 
+            </pre
+          >
+        </div>-->
+          <div class="journeyDetails">
+            <h3>Journey Details</h3>
+            <p id="trainName">Train Name:</p>
+
+            <p id="from">From :</p>
+            <p id="to">To :</p>
+
+            <p id="class">Class:</p>
+            <p id="seatName">Seat:</p>
+          </div>
+        </div>
+      </div>
+      <button class="button7" id="openModal">PROCEED TO PAYMENT</button>
+
+      <!-- <div class="paymentProcess">
+      <div class="combine">
+      <h4>Please Select Payment Method</h4>
+    
+      <input type="image" id="debit" img src="img/visa1.png" onclick="location.href='register.html'">
+      </div>
+  </div> -->
+    </div>
+    <div id="paymentModal" class="modal">
+      <div class="modal-content">
+        <h2>Payment Options</h2>
+        <div class="options">
+          <div class="option" id="supportOption">Support</div>
+          <div class="option" id="faqOption">FAQ</div>
+          <div class="option" id="offersOption">Offers</div>
+        </div>
+        <div class="options">
+          <div class="option" id="loginOption">Login</div>
+        </div>
+        <h3>Banking Method</h3>
+        <select id="bankingMethod">
+          <option value="cards">Cards</option>
+          <option value="mobileBanking">Mobile Banking</option>
+          <option value="netBanking">Net Banking</option>
+        </select>
+        <div id="credentialsContainer">
+          <!-- Placeholder for credentials form based on selected banking method -->
+        </div>
+        <button id="confirmPayment" onclick="confirmbutton()">
+          Confirm Payment
+        </button>
+      </div>
+    </div>
+    <script>
+      // Initialize a timer variable
+      let timer;
+
+      // Start or continue the timer
+      function startOrContinueTimer(durationInSeconds) {
+        // Check if the timer state exists in local storage
+        const storedTime = localStorage.getItem("timerRemainingTime");
+
+        if (storedTime) {
+          // Use the stored time as the initial duration
+          durationInSeconds = parseInt(storedTime);
+        }
+
+        // Clear any existing timers
+        clearInterval(timer);
+
+        // Set up a new timer
+        timer = setInterval(async function () {
+          console.log("yes");
+          // This code will run every second
+          console.log(`Time remaining: ${durationInSeconds} seconds`);
+
+          // Decrease the duration
+          durationInSeconds--;
+
+          // Store the remaining time in local storage
+          localStorage.setItem(
+            "timerRemainingTime",
+            durationInSeconds.toString()
+          );
+
+          // Check if the timer has reached 0
+          if (durationInSeconds <= 0) {
+            clearInterval(timer);
+            console.log("Timer has expired");
+            const userId = getCookie("userId");
+            const FROM = getCookie("fromstation");
+            const TO = getCookie("tostation");
+            const DATE = getCookie("date");
+            // Function to retrieve the seat booking object from the cookie
+            function getSeatBookingFromCookie() {
+              const cookieValue = getCookie("seatbook");
+              if (cookieValue) {
+                try {
+                  return JSON.parse(decodeURIComponent(cookieValue));
+                } catch (error) {
+                  console.error("Error parsing JSON from cookie:", error);
+                }
+              }
+              return null;
+            }
+
+            // Example: Retrieve the seat booking object from the "seatbook" cookie
+            const seatbook = getSeatBookingFromCookie();
+            console.log(seatbook);
+
+            const bookingstatus = getCookie("bookingstatus");
+            seatbook.forEach(async (element) => {
+              console.log(element.trainName, element.seatId);
+            });
+
+            const result = await fetch("http://localhost:3020/finalending", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                bookingstatus: bookingstatus,
+                FROM: FROM,
+                TO: TO,
+                DATE: DATE,
+                seatbook: seatbook,
+                userId: userId,
+              }),
+            });
+
+            // Clear the timer state from local storage
+            localStorage.removeItem("timerRemainingTime");
+          }
+        }, 1000); // Timer runs every second (1000 milliseconds)
+      }
+      // Retrieve the timer's remaining time from localStorage
+      const storedTime = localStorage.getItem("timerRemainingTime");
+
+      if (storedTime !== null) {
+        // Convert the stored time to an integer
+        const remainingTime = parseInt(storedTime);
+
+        if (!isNaN(remainingTime) && remainingTime > 0) {
+          // Start the timer with the remaining time
+          startOrContinueTimer(remainingTime);
+        } else {
+          // The stored time is invalid or expired; you can handle this case as needed
+          console.log("Invalid or expired timer data in localStorage");
+        }
+      } else {
+        // No timer data found in localStorage; you can handle this case as needed
+        console.log("No timer data found in localStorage");
+      }
+
+      // Example: Start or continue a timer for 5 seconds
+
+      function getCookie(name) {
+        const cookieValue = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(name))
+          ?.split("=")[1];
+        return cookieValue;
+      }
+
+      const userId = getCookie("userId");
+      const FROM = getCookie("fromstation");
+      const TO = getCookie("tostation");
+      const DATE = getCookie("date");
+      function getSeatBookingFromCookie() {
+        const cookieValue = getCookie("seatbook");
+        if (cookieValue) {
+          try {
+            return JSON.parse(decodeURIComponent(cookieValue));
+          } catch (error) {
+            console.error("Error parsing JSON from cookie:", error);
+          }
+        }
+        return null;
+      }
+
+      // Example: Retrieve the seat booking object from the "seatbook" cookie
+      const seatbook = getSeatBookingFromCookie();
+      const bookingstatus = getCookie("bookingstatus");
+
+      const newdiv = document.getElementById("newlyadded");
+      //const buttonid=document.getElementById("confirmPayment");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const openModalButton = document.getElementById("openModal");
+        const paymentModal = document.getElementById("paymentModal");
+        const bankingMethodSelect = document.getElementById("bankingMethod");
+        const credentialsContainer = document.getElementById(
+          "credentialsContainer"
+        );
+        const confirmPaymentButton = document.getElementById("confirmPayment");
+
+        const options = ["support", "faq", "offers", "login"];
+        options.forEach((option) => {
+          document
+            .getElementById(`${option}Option`)
+            .addEventListener("click", () => {
+              console.log(`Clicked ${option}`);
+              // You can add actions for each option here
+            });
+        });
+
+        bankingMethodSelect.addEventListener("change", () => {
+          const selectedMethod = bankingMethodSelect.value;
+          credentialsContainer.innerHTML =
+            createCredentialsForm(selectedMethod);
+        });
+
+        confirmPaymentButton.addEventListener("click", () => {
+          const selectedMethod = bankingMethodSelect.value;
+          const credentialsForm = document.getElementById(
+            `${selectedMethod}Form`
+          );
+          console.log("Credentials:", credentialsForm);
+          // Perform payment confirmation logic here
+        });
+
+        function createCredentialsForm(method) {
+          if (method === "cards") {
+            return `
+                        <form id="cardsForm">
+                            <input type="text" placeholder="Card Number">
+                            <input type="text" placeholder="Expiry Date">
+                            <input type="text" placeholder="CVV">
+                        </form>
+                    `;
+          } else if (method === "mobileBanking") {
+            return `
+                        <form id="mobileBankingForm">
+                            <input type="text" placeholder="Mobile Number">
+                            <input type="password" placeholder="PIN">
+                        </form>
+                    `;
+          } else if (method === "netBanking") {
+            return `
+                        <form id="netBankingForm">
+                            <input type="text" placeholder="Username">
+                            <input type="password" placeholder="Password">
+                        </form>
+                    `;
+          }
+        }
+
+        openModalButton.addEventListener("click", () => {
+          paymentModal.style.display = "block";
+          const initialMethod = bankingMethodSelect.value;
+          credentialsContainer.innerHTML = createCredentialsForm(initialMethod);
+        });
+      });
+      //    fetch('http://localhost:5000/paymentInformation')
+      //        .then(((response) => { return response.text(); }))
+      //        .then((data) => {
+      //            // Handle the response from the backend
+
+      //            const jsonData = data;
+
+      //            // Parse the JSON data into JavaScript objects
+      //            const parsedData = JSON.parse(jsonData);
+
+      //            // Destructure the objects
+      //            const { Person, Fare } = parsedData;
+      //            const str1=Person[0].name;
+      //            document.getElementById("nameShow").innerHTML = str1;
+
+      //            const str2= Person[0].email;
+      //            document.getElementById("emailShow").innerHTML = str2;
+
+      //            const str3= Person[0].phone;
+      //            document.getElementById("phoneShow").innerHTML = str3;
+
+      //            const str4=Fare[0].price;
+      //            document.getElementById("TicketPrice").innerHTML = str4;
+
+      //            const str5=Fare[0].charge
+      //            document.getElementById("service").innerHTML = str5;
+
+      //            const str6=Fare[0].total;
+      //            document.getElementById("TotalCharge").innerHTML = str6;
+
+      //        })
+      //        .catch(error => {
+      //            console.error('Error:', error);
+      //        });
+
+      async function confirmbutton() {
+        console.log(DATE);
+        try {
+          const result = await fetch(
+            "http://localhost:3020/gettheconfirmation",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                FROM: FROM,
+                TO: TO,
+                DATE: DATE,
+                userId: userId,
+                status: "yes",
+                seatbook: seatbook,
+              }),
+            }
+          );
+          const response = await result.json();
+          document.cookie = `bookingstatus=${response.bookingstatus}; path=/;`;
+
+          alert("you have completed payment");
+          window.location.href = "home.html";
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function payemntresult() {
+        try {
+          const result = await fetch("http://localhost:3020/paymentdetails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              FROM: FROM,
+              TO: TO,
+              DATE: DATE,
+              userId: userId,
+              // status: "yes",
+              seatbook: seatbook,
+            }),
+          });
+          const response = await result.json();
+          console.log(response);
+          const newdiv2 = document.getElementById("pay");
+          // Handle the response from the backend
+          // console.log(response.result[0].Name);
+          const trainname = document.getElementById("trainName");
+          const nameid = document.getElementById("nameShow");
+          nameid.textContent = response.result[0].NAME;
+          const email = document.getElementById("emailShow");
+          email.textContent = response.result[0].EMAIL;
+          const phone = document.getElementById("phoneShow");
+          phone.textContent = "0" + response.result[0].PHONE;
+          let totalFareInput = 0;
+          let first = 0;
+          let seatname = "";
+          var newHTML = document.createElement("div");
+          for (const booking of response.seatbooking) {
+            totalFareInput += booking.fareInput;
+            seatname += booking.seatId + " ";
+            if (first != 0) {
+              newHTML.innerHTML = `<br/>
+              <label for="name">Passenger Name</label><br />
+          <div class="show">
+            <p id="nameShow"></p>
+          </div>
+              <label for="choose">Passenger Type</label><br />
+          <select class="typeOption">
+            <option>Adult</option>
+            <option>Child</option>
+          </select>`;
+              //newdiv2.appendChild(newHTML);
+            }
+            first = first + 1;
+          }
+          var total2 = totalFareInput + 20 + (totalFareInput * 2) / 100;
+          console.log(total2);
+          const fareid = document.getElementById("price");
+          const faretotal = document.getElementById("total");
+          var currenttext2 = faretotal.textContent;
+          var currenttext = fareid.textContent;
+          var newtext = currenttext + totalFareInput;
+          fareid.textContent = newtext;
+          faretotal.textContent = currenttext2 + total2;
+          var prevcontent = trainname.textContent;
+          trainname.textContent = prevcontent + seatbook[0].trainName;
+          const from_to = document.getElementById("from");
+          from_to.textContent = "FROM :" + FROM;
+          const from_to2 = document.getElementById("to");
+          from_to2.textContent = "TO :" + TO;
+          const classname = document.getElementById("class");
+          classname.textContent = "CLASS:" + seatbook[0].Class;
+          const seatname2 = document.getElementById("seatName");
+          console.log(seatname);
+          seatname2.textContent = "SEAT:" + seatname;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      async function run() {
+        await payemntresult();
+      }
+      run();
+    </script>
+  </body>
+</html>

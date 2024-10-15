@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="search-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Findbus</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Rubik:400,700"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      #loadingIndicator {
+      display: none;
+      margin-top: 20px;
+    }
+    .classforbusname{
+      display:flex;
+      justify-content: space-evenly;
+        }
+      .ticket-info {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        /* padding: 10px; */
+        margin-top: 10px;
+        margin-right: 30px;
+      }
+      #table th {
+        padding: 8px;
+      }
+
+      #table td {
+        padding: 8px;
+      }
+
+      /* Add spacing for newly added data rows */
+      .new-data-row {
+        margin-top: 10px; /* Adjust this value as needed */
+      }
+
+      .ticket-info.visible {
+        opacity: 1; /* Make the div visible with full opacity */
+        max-height: 1000px; /* Allow the content to expand to its full height */
+      }
+      .bus-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-left: 150px;
+        padding-right: 150px;
+        /* margin-right: auto; */
+      }
+      .bus-container2 {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        transition: transform 0.4s;
+        background-color: aqua;
+        width: 800px;
+        /* margin-right: auto; */
+      }
+      .bus-container2 h1 {
+        margin-right: 400px;
+      }
+
+      .bus-info {
+        flex: 1;
+      }
+
+      /* .bus-name .bus-icon {
+        /* margin-right: 10px;  */
+
+      .toggle-container {
+        /* margin-left: 10px; */
+        cursor: pointer;
+      }
+
+      .toggle-icon {
+        cursor: pointer;
+        /* margin-left: 20px; */
+      }
+      .imgbox {
+        display: flex;
+        flex-direction: column;
+        margin-left: 20px;
+        margin-right: 20px;
+        /* background-color: aquamarine; */
+      }
+      .imgbox img {
+        width: 250px;
+        height: 250px;
+      }
+      .tickpick {
+        /* margin-right: 50px; */
+        /* flex-basis: 60%; */
+        flex-grow: 1;
+      }
+      .container {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+      }
+      .ticontainer {
+        display: flex;
+      }
+      .seat-button {
+        background: green;
+      }
+      .option_choose {
+        background-color: red;
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: 200ms ease-in-out;
+        border: 1px solid black;
+        border-radius: 10px;
+        z-index: 10;
+        background-color: white;
+        width: 500px;
+        height: 80%;
+        max-width: 80%;
+      }
+
+      .modal.active {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .modal-header {
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid black;
+      }
+
+      .modal-header .title {
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .modal-header .close-button {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .modal-body {
+        padding: 10px 15px;
+      }
+      .busseat {
+        display: flex;
+      }
+
+      #overlay {
+        position: fixed;
+        opacity: 0;
+        transition: 200ms ease-in-out;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      }
+      #close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+      }
+
+      #overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .button .btn {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+      .forbus {
+        margin-left: 600px;
+      }
+      /* styles.css */
+.bus-container {
+    border: 1px solid #ccc; /* Add a border to the div */
+    padding: 10px; /* Add some padding for better appearance */
+    margin: 10px; /* Add some margin for spacing between divs */
+    cursor: pointer; /* Change the cursor to indicate clickability */
+    transition: border-color 0.3s ease-in-out; /* Add a smooth transition effect for the border color */
+}
+
+.bus-container:hover {
+    border-color: #007bff; /* Change the border color on hover */
+}
+
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        
+      </nav>
+    </header>
+   <div>
+    <div class="contentforsearch">
+      <div>
+   
+    </div>
+      <div class="input-field">
+        <input type="text" id="from" placeholder="From" autocomplete="nope">
+      </div>
+      <div class="input-field">
+        <input type="text" id="to" placeholder="To" autocomplete="nope">
+      </div>
+      <div class="input-field">
+        <input type="date" id="date" placeholder="Date" autocomplete="nope">
+      </div>
+      <div class="button">
+        <input type="button" id="modifysearch" value="Search bus" onclick="modifysearch()">
+    </div>        
+    </div>
+    <div id="container" class="container">
+      <div class="tickpick" id="ticketpick"></div>
+      <div class="imgbox">
+        
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      
+      var seatbooking = [];
+      var dataadded = 0;
+
+      const container = document.getElementById("ticketpick"); //for main container
+      function formatDateForSQL(inputDate) {
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+    // Parse input date string in 'YYYY-MM-DD' format
+    const parts = inputDate.split('-');
+    const year = parts[0];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parts[2];
+
+    // Format the date in 'DD-MON-YYYY' format
+    const formattedDate = `${day}-${months[monthIndex]}-${year}`;
+    
+    return formattedDate;
+}
+
+    async   function modifysearch()
+      {
+        
+
+  
+    const FROM=document.getElementById("from").value;
+    const TO=document.getElementById("to").value;
+    const DATE=document.getElementById("date").value;
+    document.cookie = `fromstation=${FROM}; path=/;`;
+      document.cookie = `tostation=${TO}; path=/;`;
+
+    const result = await fetch("http://localhost:3020/getsetthebusagin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              FROM: FROM,
+              TO: TO,
+              DATE: formatDateForSQL(DATE),
+            }),
+          });
+          const response=await result.json();
+
+          while (container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+
+         
+         const loadingIndicator = document.getElementById("container");
+         setTimeout(function() {
+        // Hide loading indicator
+        loadingIndicator.style.display = "none";
+
+        // Refresh the page
+        location.reload();
+        run();
+      }, 1000); // 2000 milliseconds (2 seconds)
+    // 2000 milliseconds (2 seconds)
+   
+          
+          
+    
+}
+
+function getCookie(name) {
+      const cookieValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(name))
+        ?.split("=")[1];
+      return cookieValue;
+    }
+
+async function busInformation() {
+  try {
+    const FROM2 = getCookie("fromstation");
+          const TO2= getCookie("tostation");
+          const DATE2 = getCookie("date");
+          console.log(FROM2);
+          const FROM3 = FROM2.split(" ")[0];
+      const TO3= TO2.split(" ")[0];
+    const result = await fetch("http://localhost:3020/getbusInformation", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              FROM: FROM3,
+              TO: TO3,
+              DATE: DATE2,
+            }),
+          });
+    // Handle the response from the backend
+    const response=await result.json();
+    console.log(response);
+
+    // Parse the JSON data into JavaScript objects
+    const bus = response;
+    const container = document.getElementById("ticketpick");
+
+    bus.forEach((element) => {
+      console.log(element.BUS_NAME);
+      const div = document.createElement("div");
+      div.id = "div" + element.BUS_NAME;
+      div.classList.add("bus-container");
+      // Add a click event listener to each div
+      
+
+      const hi = document.createElement("div");
+      hi.id = "hi" + element.BUS_NAME;
+      hi.classList.add("bus-container2");
+
+      const h1 = document.createElement("h1");
+      h1.id = "h1" + element.BUS_NAME;
+      h1.classList.add("bus-name");
+
+      h1.innerText = element.BUS_NAME+"("+element.BUS_ID+")";
+      hi.appendChild(h1);
+      //console.log(typeof(element.BUS_ID));
+
+      div.appendChild(hi);
+      container.appendChild(div);
+      div.addEventListener("click", async() => {
+        const result = await fetch("http://localhost:3020/sendthebusid", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              BUS_ID:element.BUS_ID,
+              BUS_NAME:element.BUS_NAME,
+              
+            }),
+          });
+          window.location.href = "informationofbus.html";
+      });
+     
+
+    });
+  } catch (error) {
+    console.error("Error fetching bus information:", error);
+    throw error;
+  }
+}
+
+
+
+    async function run() {
+        try {
+          
+          await busInformation();
+          
+
+    
+        } catch (error) {
+          console.error("Error during run:", error);
+        }
+      }
+      run();
+    </script>
+  </body>
+</html>

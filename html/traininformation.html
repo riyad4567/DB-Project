@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html class="search-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FindTrain</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Rubik:400,700"
+    />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      #loadingIndicator {
+        display: none;
+        margin-top: 20px;
+      }
+      .classfortrainname {
+        display: flex;
+        justify-content: space-evenly;
+      }
+      .ticket-info {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        /* padding: 10px; */
+        margin-top: 10px;
+        margin-right: 30px;
+      }
+      #table th {
+        padding: 8px;
+      }
+
+      #table td {
+        padding: 8px;
+      }
+
+      /* Add spacing for newly added data rows */
+      .new-data-row {
+        margin-top: 10px; /* Adjust this value as needed */
+      }
+
+      .ticket-info.visible {
+        opacity: 1; /* Make the div visible with full opacity */
+        max-height: 1000px; /* Allow the content to expand to its full height */
+      }
+      .train-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-left: 150px;
+        padding-right: 150px;
+        /* margin-right: auto; */
+      }
+      .train-container2 {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        transition: transform 0.4s;
+        background-color: aqua;
+        width: 800px;
+        /* margin-right: auto; */
+      }
+      .train-container2 h1 {
+        margin-right: 400px;
+      }
+
+      .train-info {
+        flex: 1;
+      }
+
+      /* .train-name .train-icon {
+        /* margin-right: 10px;  */
+
+      .toggle-container {
+        /* margin-left: 10px; */
+        cursor: pointer;
+      }
+
+      .toggle-icon {
+        cursor: pointer;
+        /* margin-left: 20px; */
+      }
+      .imgbox {
+        display: flex;
+        flex-direction: column;
+        margin-left: 20px;
+        margin-right: 20px;
+        /* background-color: aquamarine; */
+      }
+      .imgbox img {
+        width: 250px;
+        height: 250px;
+      }
+      .tickpick {
+        /* margin-right: 50px; */
+        /* flex-basis: 60%; */
+        flex-grow: 1;
+      }
+      .container {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+      }
+      .ticontainer {
+        display: flex;
+      }
+      .seat-button {
+        background: green;
+      }
+      .option_choose {
+        background-color: red;
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: 200ms ease-in-out;
+        border: 1px solid black;
+        border-radius: 10px;
+        z-index: 10;
+        background-color: white;
+        width: 500px;
+        height: 80%;
+        max-width: 80%;
+      }
+
+      .modal.active {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .modal-header {
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid black;
+      }
+
+      .modal-header .title {
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .modal-header .close-button {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .modal-body {
+        padding: 10px 15px;
+      }
+      .trainseat {
+        display: flex;
+      }
+
+      #overlay {
+        position: fixed;
+        opacity: 0;
+        transition: 200ms ease-in-out;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      }
+      #close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+      }
+
+      #overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .button .btn {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+      .fortrain {
+        margin-left: 600px;
+      }
+      .home .content .input-field
+      {
+        width:100px;
+        height:20px;
+        margin-left: 400px;
+      }
+      .home .content .button input{
+
+
+        width: 20%;
+  padding: 8px 8px;
+  margin-top: 40px;
+  margin-right: 300px;
+  margin-left: 400px;
+  background: darkgreen;
+  font-family: "Rubik", sans-serif;
+  cursor: pointer;
+  color: white;
+  font-size: 26px;
+  border-radius: 14px;
+  letter-spacing: 0.2px;
+  transition: all 0.3s;
+      }
+      .home .traindetails{
+
+      width:600px;
+      height:500px ; 
+      margin-left:400px;
+      font-size: 25px;
+     
+
+      }
+      
+
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <a href="index.html">Log Out</a>
+        <a href="accountinfo.html">Account Information</a>
+        <a href="Purchasehistory.html">History</a>
+        <a href="traininformation.html">Transport Information</a>
+        <a href="home.html">Home</a>
+      </nav>
+    </header>
+    <div class="home">
+      <form>
+        <h1>Ticket Purchase</h1>
+        <div class="content">
+          <div class="input-field">
+           
+            <select id="from" class="input-field1">
+              <option value="" disabled selected>TRAIN</option>
+            </select>
+        </div>
+        <div class="button">
+            <input
+              type="button"
+              id="trainButton"
+              value="Search Train"
+              onclick="tryhard()"
+            />
+      </form>
+      </div>
+      </div>
+
+      <div id="traindetails" class="traindetails"></div>
+    </div>
+   
+    <script>
+      
+
+async function populateDropdowns() {
+      const fromDropdown = document.getElementById("from");
+      const toDropdown = document.getElementById("to");
+
+      try {
+        const response = await fetch(
+          "http://localhost:3020/getdifferenttraindetails"
+        ); // Replace with your actual API endpoint
+        const data = await response.json();
+
+        data.forEach((city) => {
+          const option = document.createElement("option");
+          option.value = city.TRAIN_NAME; // Use a unique identifier for each city
+          option.textContent = city.TRAIN_NAME; // Use the name of the city
+          fromDropdown.appendChild(option);
+         // toDropdown.appendChild(option.cloneNode(true)); // Clone option for "To" dropdown
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    // Call the populateDropdowns function when the page loads
+    populateDropdowns();
+   
+
+// Use a regular expression to match the parts you want
+async function tryhard(){
+    const div=document.getElementById("traindetails")
+    
+    const FROM=document.getElementById("from").value;
+    console.log(FROM);
+    const trainName =FROM;
+    console.log(trainName);
+
+    //const matchResult = trainName.match(/^(.*?)\s*-\s*\((.*?)\)$/);
+    
+
+// Split the string by '-('
+const parts = trainName.split('-(');
+
+if (parts.length === 2) {
+  // The first part contains 'Rangpur Express'
+  const train = parts[0].trim();
+
+  // The second part contains 'U)' – remove the closing parenthesis to get 'U'
+  const category = parts[1].replace(')', '');
+  const result = await fetch("http://localhost:3020/trainextradetails", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  
+                  trainName: train,
+                  UPDOWN: category,
+                 
+                  //Class: Class,
+                }),
+              });
+              div.textContent='';
+             var trainDetails = await result.json();
+            console.log(trainDetails);
+            if(category=='D')
+            {
+                trainDetails= trainDetails.slice().reverse();
+            }
+            //trainDetails.style.display="block";
+
+              trainDetails.forEach((dataEntry) => {
+                const visitTime = dataEntry.VISIT_TIME;
+                const intervalStation = dataEntry.INTERVAL_STATION;
+
+                // Create an HTML element to display the data
+                const dataEntryElement = document.createElement("p");
+                dataEntryElement.textContent = `Visit Time: ${visitTime}, Interval Station: ${intervalStation}`;
+                div.appendChild(dataEntryElement);
+                // Append the element to the modal body
+               
+              });
+
+
+  console.log('Train:', train);
+  console.log('Category:', category);
+
+  console.log('Train:', train);
+  console.log('Category:', category);
+} else {
+  console.log('String format not as expected.');
+}
+
+
+
+
+
+
+}
+
+     
+
+      async function buttondtraindetails() {
+        document.addEventListener("click", async (event) => {
+          if (event.target.classList.contains("fortrain")) {
+            try {
+              const buttonid = event.target.id;
+              console.log(buttonid);
+              const [trainname, Class] = buttonid.split("%");
+              console.log(trainname, Class);
+              const trainName = trainname;
+
+              const result = await fetch("http://localhost:3020/traindetails", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userId: userId,
+                  trainName: trainName,
+                  FROM: FROM,
+                  TO: TO,
+                  DATE: DATE,
+                  //Class: Class,
+                }),
+              });
+              const trainDetails = await result.json();
+              console.log(trainDetails);
+              //const modal = document.getElementById(buttonid).closest(".modal");
+              const modalBody = document.getElementById(
+                "modal-body" + trainName
+              );
+              trainDetails.forEach((dataEntry) => {
+                const visitTime = dataEntry.VISIT_TIME;
+                const intervalStation = dataEntry.INTERVAL_STATION;
+
+                // Create an HTML element to display the data
+                const dataEntryElement = document.createElement("p");
+                dataEntryElement.classList.add("fa-solid fa-location-dot")
+                dataEntryElement.textContent = `  Visit Time: ${visitTime}, Interval Station: ${intervalStation}`;
+
+                // Append the element to the modal body
+               div.appendChild(dataEntryElement);
+              });
+
+              // Open the modal
+              const overlay = document.getElementById("overlay" + trainName);
+              const modal = document.getElementById("modal" + trainName);
+              // const infoModal = document.getElementById("infoModal");
+              console.log(modal);
+
+              openModal(modal, overlay);
+
+              const closeModalButton = document.getElementById(
+                "close" + trainName
+              );
+              closeModalButton.addEventListener("click", () => {
+                closeModal(modal, overlay);
+                while (modalBody.firstChild) {
+                  modalBody.removeChild(modalBody.firstChild);
+                }
+              });
+
+              //seatInformation(Class, coachresponse);
+              //window.location.href = "http://localhost:3001/coachInformation";
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

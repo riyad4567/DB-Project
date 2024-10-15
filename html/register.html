@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="register-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="./resister.css" />
+  </head>
+
+  <body>
+    <div class="regpage">
+      <form method="post" onsubmit="return regfunction()">
+        <h1>Register</h1>
+        <div class="content">
+          <div class="input-field">
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              autocomplete="off"
+            />
+          </div>
+          <div id="email_error">Please Enter your Email</div>
+          <div class="input-field">
+            <input type="text" id="nid" placeholder="NID" autocomplete="off" />
+          </div>
+          <div id="nid_error">NID Should be 8 digit</div>
+          <div class="input-field">
+            <input
+              type="number"
+              id="phone"
+              placeholder="PhoneNumber"
+              autocomplete="off"
+            />
+          </div>
+          <div id="number_error">Number Should be 11 digit</div>
+          <div class="input-field">
+            <input
+              type="password"
+              id="password"
+              placeholder="CreatePassword"
+              autocomplete="new-password"
+            />
+          </div>
+          <div id="password_error">Password Must be atleast 6 digit</div>
+          <div class="button">
+            <input
+              type="button"
+              id="submit"
+              value="Submit"
+              onclick="regfunction()"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <script>
+      const EMAIL = document.getElementById("email");
+      const NID = document.getElementById("nid");
+      const PHONE = document.getElementById("phone");
+      const PASSWORD = document.getElementById("password");
+
+      var number_error = document.getElementById("number_error");
+      var password_error = document.getElementById("password_error");
+      var email_error = document.getElementById("email_error");
+      var nid_error = document.getElementById("nid_error");
+
+      EMAIL.addEventListener("textInput", emailVerify);
+      NID.addEventListener("textInput", nidVerify);
+      PHONE.addEventListener("textInput", numberVerify);
+      PASSWORD.addEventListener("textInput", passwordVerify);
+
+      async function regfunction() {
+        if (
+          EMAIL.value == null ||
+          EMAIL.value == "" ||
+          EMAIL.value.length < 1
+        ) {
+          email_error.style.display = "block";
+          EMAIL.focus();
+          EMAIL.style.border = "1px solid red";
+          return false;
+        }
+        if (NID.value == null || NID.value == "" || NID.value.length != 8) {
+          nid_error.style.display = "block";
+          NID.focus();
+          NID.style.border = "1px solid red";
+          return false;
+        }
+        if (
+          PHONE.value == null ||
+          PHONE.value == "" ||
+          PHONE.value.length != 11
+        ) {
+          number_error.style.display = "block";
+          PHONE.focus();
+          PHONE.style.border = "1px solid red";
+          return false;
+        }
+
+        if (
+          PASSWORD.value == null ||
+          PASSWORD.value == "" ||
+          PASSWORD.value.length < 6
+        ) {
+          password_error.style.display = "block";
+          PASSWORD.focus();
+          PASSWORD.style.border = "1px solid red";
+          return false;
+        }
+        const result = await fetch("http://localhost:3020/registration", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            EMAIL: EMAIL.value,
+            PHONE: PHONE.value,
+            NID: NID.value,
+            PASSWORD: PASSWORD.value,
+          }),
+        });
+
+        const response = await result.json();
+
+        alert("registration is done ");
+        window.location.href = "index.html";
+        // else {
+        //     alert('Registration Successsful!!');
+        // }
+        console.log(PHONE, EMAIL);
+
+        //if(response.)
+      }
+
+      function emailVerify() {
+        if (EMAIL.value.length >= 0) {
+          email_error.style.display = "none";
+          EMAIL.style.border = "1px solid black";
+          return true;
+        }
+      }
+      function nidVerify() {
+        if (NID.value.length == 7) {
+          nid_error.style.display = "none";
+          NID.style.border = "1px solid black";
+          return true;
+        }
+      }
+      function numberVerify() {
+        if (PHONE.value.length == 10) {
+          number_error.style.display = "none";
+          PHONE.style.border = "1px solid black";
+          return true;
+        }
+      }
+      function passwordVerify() {
+        if (PASSWORD.value.length >= 5) {
+          password_error.style.display = "none";
+          PASSWORD.style.border = "1px solid black";
+          return true;
+        }
+      }
+    </script>
+  </body>
+</html>

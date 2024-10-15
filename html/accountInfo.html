@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="accountInfo-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AccountInformation</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Rubik:400,700"
+    />
+    <link rel="stylesheet" href="./accountinfo.css" />
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <a href="index.html">Log Out</a>
+        <a href="accountinfo.html">Account Information</a>
+        <a href="Purchasehistory.html">History</a>
+        <a href="traininformation.html">Transport Information</a>
+        <a href="home.html">Home</a>
+      </nav>
+    </header>
+    <div class="holdInfo">
+      <div class="Info">
+        <label for="nameInfo">Name</label><br />
+        <div class="showInfo">
+          <p id="nameShowInfo"></p>
+        </div>
+        <label for="email">Email</label><br />
+        <div class="showInfo">
+          <p id="emailShowInfo"></p>
+        </div>
+        <label for="phone">Phone Number</label><br />
+        <div class="showInfo">
+          <p id="phoneShowInfo"></p>
+        </div>
+        <label for="nid">NID Number</label><br />
+        <div class="showInfo">
+          <p id="nidShowInfo"></p>
+        </div>
+        <label for="dob">Date Of Birth</label><br />
+        <div class="showInfo">
+          <p id="dobShowInfo"></p>
+        </div>
+        <label for="address">Address</label><br />
+        <div class="showInfo">
+          <p id="addressShowInfo"></p>
+        </div>
+      </div>
+    </div>
+    <script>
+      const name = document.getElementById("nameShowInfo");
+      const email = document.getElementById("emailShowInfo");
+      const phone = document.getElementById("phoneShowInfo");
+      const nid = document.getElementById("nidShowInfo");
+      const id = document.getElementById("dobShowInfo");
+      const address = document.getElementById("addressShowInfo");
+      function getCookie(name) {
+        const cookieValue = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(name))
+          ?.split("=")[1];
+        return cookieValue;
+      }
+      const userId = getCookie("userId");
+      async function getinfo() {
+        const result = await fetch("http://localhost:3020/accountinformation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+          }),
+        });
+        const response = await result.json();
+        console.log(response);
+        name.textContent = response[0].NAME;
+        email.textContent = response[0].EMAIL;
+        phone.textContent = userId;
+        nid.textContent = response[0].NID;
+        address.textContent = response[0].ADDRESS;
+        id.textContent = response[0].DOB;
+      }
+      getinfo();
+    </script>
+  </body>
+</html>

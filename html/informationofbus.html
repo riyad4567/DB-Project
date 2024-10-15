@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Rubik:400,700"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      #loadingIndicator {
+        display: none;
+        margin-top: 20px;
+      }
+      .classfortrainname {
+        display: flex;
+        justify-content: space-evenly;
+      }
+      .ticket-info {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        /* padding: 10px; */
+        margin-top: 10px;
+        margin-right: 30px;
+      }
+      #table th {
+        padding: 8px;
+      }
+
+      #table td {
+        padding: 8px;
+      }
+
+      /* Add spacing for newly added data rows */
+      .new-data-row {
+        margin-top: 10px; /* Adjust this value as needed */
+      }
+
+      .ticket-info.visible {
+        opacity: 1; /* Make the div visible with full opacity */
+        max-height: 1000px; /* Allow the content to expand to its full height */
+      }
+      .train-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-left: 150px;
+        padding-right: 150px;
+        /* margin-right: auto; */
+      }
+      .train-container2 {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        transition: transform 0.4s;
+        background-color: aqua;
+        width: 800px;
+        /* margin-right: auto; */
+      }
+      .train-container2 h1 {
+        margin-right: 400px;
+      }
+
+      .train-info {
+        flex: 1;
+      }
+
+      /* .train-name .train-icon {
+      /* margin-right: 10px;  */
+
+      .toggle-container {
+        /* margin-left: 10px; */
+        cursor: pointer;
+      }
+
+      .toggle-icon {
+        cursor: pointer;
+        /* margin-left: 20px; */
+      }
+      .imgbox {
+        display: flex;
+        flex-direction: column;
+        margin-left: 20px;
+        margin-right: 20px;
+        /* background-color: aquamarine; */
+      }
+      .imgbox img {
+        width: 250px;
+        height: 250px;
+      }
+      .tickpick {
+        /* margin-right: 50px; */
+        /* flex-basis: 60%; */
+        flex-grow: 1;
+      }
+      .container {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+      }
+      .ticontainer {
+        display: flex;
+      }
+      .seat-button {
+        background: green;
+      }
+      .option_choose {
+        background-color: red;
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: 200ms ease-in-out;
+        border: 1px solid black;
+        border-radius: 10px;
+        z-index: 10;
+        background-color: white;
+        width: 500px;
+        height: 80%;
+        max-width: 80%;
+      }
+
+      .modal.active {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .modal-header {
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid black;
+      }
+
+      .modal-header .title {
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .modal-header .close-button {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .modal-body {
+        padding: 10px 15px;
+      }
+      .trainseat {
+        display: flex;
+      }
+
+      #overlay {
+        position: fixed;
+        opacity: 0;
+        transition: 200ms ease-in-out;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      }
+      #close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+      }
+
+      #overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .button .btn {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+      .fortrain {
+        margin-left: 600px;
+      }
+      .info-table {
+        display: flex;
+        flex-direction: row;
+        margin-top: 20px;
+
+        justify-content: space-between;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .info-label {
+        font-weight: bold;
+      }
+
+      .info-value {
+        text-align: center; /* Align values in the center */
+      }
+      .bus-layout {
+        margin-left: 200px;
+      }
+    </style>
+    <!-- Include your CSS file -->
+    <title>Bus Seat Configuration</title>
+  </head>
+  <body>
+    <h1>Bus Seat Configuration</h1>
+
+    <div class="info-table">
+      <div class="info-row">
+        <div class="info-label">FROM STATION:</div>
+        <div class="info-value" id="fromStationValue"></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">TO STATION:</div>
+        <div class="info-value" id="toStationValue"></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">START TIME:</div>
+        <div class="info-value" id="startTimeValue"></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">DESTINATION TIME:</div>
+        <div class="info-value" id="destinationTimeValue"></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">FARE:</div>
+        <div class="info-value" id="fareValue"></div>
+      </div>
+    </div>
+
+    <div class="bus-layout" id="busLayout">
+      <!-- Seats will be dynamically added here using JavaScript -->
+    </div>
+
+    <script>
+      function getCookie(name) {
+        const cookieValue = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(name))
+          ?.split("=")[1];
+        return cookieValue;
+      }
+
+      const userId = getCookie("userId");
+      const FROM = getCookie("fromstation");
+      const TO = getCookie("tostation");
+      const DATE = getCookie("date");
+      console.log(FROM);
+      console.log(userId);
+      // script.js
+      const container = document.getElementById("busLayout");
+      const busfrom = document.getElementById("fromStationValue");
+      const busto = document.getElementById("toStationValue");
+      const st = document.getElementById("startTimeValue");
+      const ft = document.getElementById("destinationTimeValue");
+      const fare = document.getElementById("fareValue");
+      async function businformation() {
+        const result = await fetch("http://localhost:3020/getdatabusrow");
+        if (!result.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const response = await result.json();
+        busfrom.textContent = response.FROM;
+        busto.textContent = response.TO;
+        st.textContent = response.START_TIME;
+        ft.textContent = response.FINISH_TIME;
+        fare.textContent = response.FARE;
+      }
+      var dataadded = 0;
+
+      // script.js
+      async function paymentproceed() {
+        const FROM = getCookie("fromstaion");
+        document.addEventListener("click", async (event) => {
+          if (event.target.classList.contains("buttonapp")) {
+            try {
+              const result = await fetch(
+                "http://localhost:3020/paymentproceedforbus",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    FROM: FROM,
+                    TO: TO,
+                    DATE: DATE,
+                    userId: userId,
+                    seatbook: seatbooking,
+                  }),
+                }
+              );
+
+              alert(userId + "has completed payment");
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        });
+      }
+      async function seatInformation() {
+        seatbooking = [];
+        dataadded = 0;
+        //const FROM = getCookie("fromstaion");
+        const busseatpaymentdiv2 = document.createElement("div");
+        busseatpaymentdiv2.classList.add("payment");
+        busseatpaymentdiv2.id = "seat" + "payment";
+        const divforpayment = document.createElement("div");
+        divforpayment.classList.add("paymentdiv");
+        divforpayment.id = "payment";
+        var name = "table";
+        console.log(FROM);
+        divforpayment.innerHTML = `
+                        <div class="containerpayment">
+              <h1>Seat Details</h1>
+              <table id="table">
+                <tr>
+                  <th>Class</th>
+                  <th>Seats</th>
+                  <th>Fare</th>
+                </tr>
+                <!-- This row will be populated by backend data -->
+              </table>
+              <div class="total-box">
+                <p>Total: <span id="totalFare">৳ 0.00</span></p>
+
+                <p><b>Boarding Station *</b><br />${FROM}</p>
+              </div>
+              <!-- <form id="inputForm">
+                <label for="classInput">Class:</label>
+                <input type="text" id="classInput" required /><br />
+                <label for="seatInput">Seat:</label>
+                <input type="text" id="seatInput" required /><br />
+                <label for="fareInput">Fare:</label>
+                <input type="number" id="fareInput" step="0.01" required /><br />
+
+              </form> -->
+              <button class="buttonapp" type="submit" id="paymentapp">payment</button>
+              <button class="buttoncloseforpayment" id="close-}">Close</button>
+            </div>
+
+                        `;
+        let totalFare = 0;
+        //for adding seat
+        const busseat = document.createElement("div");
+        busseat.classList.add("busseat2");
+        busseat.id + "seat";
+        // const coachdivcreated = document.getElementById("coach" );
+        //console.log(mainbusdiv.id);
+
+        // console.log(coachresponse);
+        // console.log("no");
+        //here adding the different coach optionnn
+
+        //busseat.appendChild(coachdiv);
+        //console.log(coachresponse);s
+        var seatconfigure = document.createElement("div");
+        // seatconfigure.id = "bhai" ;
+        var indexone = 0;
+
+        //for seeing the firstone in the configure--------------------------------->>
+
+        //busseat.appendChild(seatconfigure);
+
+        //for seeeing the all other options------------->>
+
+        seatconfigure = document.createElement("div");
+        seatconfigure.classList.add("seat-configure");
+        seatconfigure.id = "bhai";
+
+        //console.log(foundSeatConfig.seats);
+        const table = document.getElementById("table");
+        const totalFareSpan = document.getElementById("totalFare");
+
+        // const rows = document.getElementById("table");
+        // for (let i = rows.length - 1; i > 0; i--) {
+        //   table.removeChild(rows[i]);
+        // }
+        const result = await fetch(
+          "http://localhost:3020/getseatconfigureofbus"
+        );
+        if (!result.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const response = await result.json();
+        console.log(response);
+        const foundSeatConfig = response.seatdata;
+        const foundSeatConfig2 = response.seatdata2;
+        const foundSeatConfig3 = response.seatdata3;
+        console.log(response.seatdata);
+
+        // // Reset total fare and display
+        // var totalFare = 0;
+        // totalFareSpan.textContent = `৳ ${totalFare.toFixed(2)}`;
+
+        seatconfigure.classList.add("containerSeat");
+        var index = 0;
+        ///here query is needed for the seats
+        foundSeatConfig.forEach((value) => {
+          const seatrowproperty = document.createElement("div");
+          seatrowproperty.classList.add("row");
+          var index2 = 0;
+
+          value.forEach((seatValue) => {
+            const seat = document.createElement("div");
+            seat.classList.add("seat");
+            const seatContent = document.createElement("div");
+            seatContent.classList.add("seat-content");
+            seatContent.textContent = foundSeatConfig3[index][index2];
+            seatContent.value = seat.setAttribute(
+              "data-seat-id",
+              foundSeatConfig2[index][index2]
+            );
+
+            seat.appendChild(seatContent);
+            if (seatValue == 1) seat.classList.add("sold");
+            else if (seatValue == 2) seat.classList.add("na");
+            seatrowproperty.appendChild(seat);
+
+            index2 = index2 + 1;
+            const seatId = seat.getAttribute("data-seat-id");
+            seat.addEventListener("click", async function () {
+              if (
+                !seat.classList.contains("sold") &&
+                dataadded < 4 &&
+                !seat.classList.contains("na") &&
+                dataadded < 4
+              ) {
+                try {
+                  //console.log(response.rows[0].FARE);
+                  const seatr = seat.getAttribute("data-seat-id");
+                  const seatname = seat.textContent;
+
+                  // Extract the seat number from seatId
+                  const seatNumber = parseInt(seatr) % 100;
+                  console.log(seatNumber);
+                  //var seatId = seatNumber;
+
+                  const fareInput = parseInt(fare.textContent);
+                  const table = document.getElementById("table");
+                  const closeButton = document.getElementById("closeButton");
+                  const totalFareSpan = document.getElementById("totalFare");
+
+                  const newRow = document.createElement("tr");
+                  newRow.setAttribute("id", seatId);
+                  newRow.innerHTML = `
+        <td>NON AC</td>
+        <td>${seatname}</td>
+        <td>${fareInput.toFixed(2)} BDT</td>
+      `;
+                  table.appendChild(newRow);
+
+                  // Apply the same styling to the newly added row
+                  newRow.querySelectorAll("td").forEach((cell) => {
+                    cell.style.padding = "8px"; // Adjust this value as needed
+                  });
+
+                  // Add spacing for the newly added row
+                  newRow.classList.add("new-data-row");
+                  seatbooking.push({
+                    //Class: Class,
+                    seatId: seatId,
+                    fareInput: fareInput,
+                  });
+
+                  // Update total fare and display
+                  totalFare += fareInput;
+                  totalFareSpan.textContent = `৳ ${totalFare.toFixed(2)}`;
+                  seat.classList.add("na");
+                  var row = parseInt(seatNumber / 5);
+                  var column = parseInt((seatNumber % 5) - 1); //seatNumber---->
+                  //console.log(column);
+                  if (seatNumber % 5 == 0) {
+                    row = seatNumber / 5 - 1;
+                    column = 4;
+                  }
+                  // console.log(row);
+                  // console.log(column);
+                  // console.log(coachresponse[0].seats);
+
+                  if (
+                    foundSeatConfig[row] &&
+                    foundSeatConfig[row][column] !== undefined
+                  ) {
+                    foundSeatConfig[row][column] = 2;
+                    console.log(foundSeatConfig);
+                  }
+                  dataadded = dataadded + 1;
+                  console.log(seatbooking);
+
+                  //alert(`Seat ${seatId} booked successfully!`);
+
+                  //window.location.href = "http://localhost:3001/coachInformation";
+                } catch (error) {
+                  console.error(error);
+                  throw error;
+                }
+              } else if (seat.classList.contains("na")) {
+                const totalFareSpan = document.getElementById("totalFare");
+                //totalFareSpan.textContent = `৳ ${totalFare.toFixed(2)}`;
+                // Assuming you want to delete the fare input of a seat with seatId 'TA-3'
+                // Replace with the seatId you want to delete
+
+                // Find the index of the object in the array
+                const i = seatbooking.findIndex(
+                  (booking) => booking.seatId === seatId
+                );
+
+                if (i !== -1) {
+                  // Remove the object from the array
+                  const deletedFareInput = seatbooking[i].fareInput;
+                  console.log(seatbooking[i]); // Get the fareInput value
+                  seatbooking.splice(i, 1);
+                  console.log(deletedFareInput);
+                  console.log(seatbooking);
+
+                  // Update the total fare by subtracting the deleted fare input
+                  totalFare -= deletedFareInput;
+                  totalFareSpan.textContent = `৳ ${totalFare.toFixed(2)}`;
+
+                  // Find and remove the corresponding row from the table
+                  const rowToDelete = document.getElementById(seatId);
+                  if (rowToDelete) {
+                    rowToDelete.remove();
+                  }
+                }
+
+                const seatr = seat.getAttribute("data-seat-id");
+
+                // Extract the seat number from seatId
+                const seatNumber = parseInt(seatr) % 100;
+                var row = parseInt(seatNumber / 5);
+                var column = parseInt((seatNumber % 5) - 1); //seatNumber---->
+                //console.log(column);
+                if (seatNumber % 5 == 0) {
+                  row = seatNumber / 5 - 1;
+                  column = 4;
+                }
+                // console.log(row);
+                // console.log(column);
+                // console.log(coachresponse[0].seats);
+
+                if (
+                  foundSeatConfig[row] &&
+                  foundSeatConfig[row][column] !== undefined
+                ) {
+                  foundSeatConfig[row][column] = 2;
+                  console.log(foundSeatConfig);
+                }
+
+                seat.classList.remove("na");
+
+                dataadded = dataadded - 1;
+              } else {
+                if (dataadded > 4) {
+                  alert("Maximum 4 ticket can be booked");
+                } else alert(`Seat ${seatId} is not available.`);
+              }
+            });
+          });
+          index = index + 1;
+
+          seatconfigure.appendChild(seatrowproperty);
+        });
+
+        busseat.appendChild(seatconfigure);
+
+        console.log("Added new seatconfigure."); //
+
+        busseatpaymentdiv2.appendChild(busseat);
+        busseatpaymentdiv2.appendChild(divforpayment);
+        container.appendChild(busseatpaymentdiv2);
+      }
+
+      businformation();
+      seatInformation();
+      paymentproceed();
+    </script>
+    <!-- Include your JavaScript file -->
+  </body>
+</html>

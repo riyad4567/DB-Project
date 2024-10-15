@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="login-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Rubik:400,700"
+    />
+    <link rel="stylesheet" href="./login.css" />
+  </head>
+
+  <body>
+    <div class="login-form">
+      <div class="BOX">
+        <img class="rail" src="img/rail1.png" />
+        <p class="p-text">Welcome Back In E-Ticketing System</p>
+        <br />
+        <p class="p1-text">Please Log In To Continue</p>
+      </div>
+      <form id="frm1" method="post" onsubmit="return myfunction()">
+        <h1>Login</h1>
+        <div class="content">
+          <img class="logo" src="img/logo3.png" />
+          <div class="input-field">
+            <input
+              type="number"
+              id="userNumber"
+              placeholder="Number"
+              autocomplete="off"
+            />
+          </div>
+          <div id="Number_error">Number Should Be 11 Digit</div>
+          <div class="input-field">
+            <input
+              type="password"
+              id="userPassword"
+              placeholder="Password"
+              autocomplete="off"
+            />
+          </div>
+          <div id="pass_error">Invalid Password</div>
+
+          <!-- <a href="#" class="link">Forgot Your Password?</a> -->
+        </div>
+        <div class="action">
+          <input
+            type="button"
+            id="regButton"
+            value="Register"
+            onclick="location.href='register.html'"
+          />
+          <input
+            type="button"
+            id="signButton"
+            value="Log In"
+            onclick="myFunction()"
+          />
+        </div>
+      </form>
+    </div>
+    <script>
+      let timer;
+      function getCookie(name) {
+        const cookieValue = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(name))
+          ?.split("=")[1];
+        return cookieValue;
+      }
+
+      const userId = getCookie("userId");
+      const FROM = getCookie("fromstation");
+      const TO = getCookie("tostation");
+      const DATE = getCookie("date");
+
+      // Start or continue the timer
+      function startOrContinueTimer(durationInSeconds) {
+        // Check if the timer state exists in local storage
+        const storedTime = localStorage.getItem("timerRemainingTime");
+
+        if (storedTime) {
+          // Use the stored time as the initial duration
+          durationInSeconds = parseInt(storedTime);
+        }
+
+        // Clear any existing timers
+        clearInterval(timer);
+
+        // Set up a new timer
+        timer = setInterval(async function () {
+          console.log("yes");
+          // This code will run every second
+          console.log(`Time remaining: ${durationInSeconds} seconds`);
+
+          // Decrease the duration
+          durationInSeconds--;
+
+          // Store the remaining time in local storage
+          localStorage.setItem(
+            "timerRemainingTime",
+            durationInSeconds.toString()
+          );
+
+          // Check if the timer has reached 0
+          if (durationInSeconds <= 0) {
+            clearInterval(timer);
+            console.log("Timer has expired");
+            const userId = getCookie("userId");
+            const FROM = getCookie("fromstation");
+            const TO = getCookie("tostation");
+            const DATE = getCookie("date");
+            // Function to retrieve the seat booking object from the cookie
+            function getSeatBookingFromCookie() {
+              const cookieValue = getCookie("seatbook");
+              if (cookieValue) {
+                try {
+                  return JSON.parse(decodeURIComponent(cookieValue));
+                } catch (error) {
+                  console.error("Error parsing JSON from cookie:", error);
+                }
+              }
+              return null;
+            }
+
+            // Example: Retrieve the seat booking object from the "seatbook" cookie
+            const seatbook = getSeatBookingFromCookie();
+            const bookingstatus = getCookie("bookingstatus");
+            const result = await fetch("http://localhost:3020/finalending", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                bookingstatus: bookingstatus,
+                FROM: FROM,
+                TO: TO,
+                DATE: DATE,
+                seatbook: seatbook,
+                userId: userId,
+              }),
+            });
+
+            // Clear the timer state from local storage
+            localStorage.removeItem("timerRemainingTime");
+          }
+        }, 1000); // Timer runs every second (1000 milliseconds)
+      }
+      // Retrieve the timer's remaining time from localStorage
+      const storedTime = localStorage.getItem("timerRemainingTime");
+
+      if (storedTime !== null) {
+        // Convert the stored time to an integer
+        const remainingTime = parseInt(storedTime);
+
+        if (!isNaN(remainingTime) && remainingTime > 0) {
+          // Start the timer with the remaining time
+          startOrContinueTimer(remainingTime);
+        } else {
+          // The stored time is invalid or expired; you can handle this case as needed
+          console.log("Invalid or expired timer data in localStorage");
+        }
+      } else {
+        // No timer data found in localStorage; you can handle this case as needed
+        console.log("No timer data found in localStorage");
+      }
+
+      // function setCookie(name, value, daysToExpire) {
+      //   const expires = new Date();
+      //   expires.setTime(expires.getTime() + daysToExpire * 24 * 60 * 60 * 1000); // Convert days to milliseconds
+      //   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+      // }
+      const Number = document.getElementById("userNumber");
+      const Password = document.getElementById("userPassword");
+      var Number_error = document.getElementById("Number_error");
+      var pass_error = document.getElementById("pass_error");
+
+      Number.addEventListener("textInput", NumberVerify);
+      Password.addEventListener("textInput", passVerify);
+
+      async function myFunction() {
+        if (Number.value.length != 11) {
+          Number_error.style.display = "block";
+          Number.style.border = "2px solid red";
+          Number.focus();
+          return false;
+        }
+
+        if (Number.value == null || Number.value == "") {
+          alert("NumberCan Not Be Empty!!");
+          return false;
+        } else if (Password.value == null || Password.value == "") {
+          alert("Password Can Not Be Empty!!");
+          return false;
+        } else {
+          const result = await fetch("http://localhost:3020/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Number: Number.value,
+              PASSWORD: Password.value,
+            }),
+          });
+
+          const response = await result.json();
+          if (response.confirm_status == "yes") {
+            // After successful login
+
+            document.cookie = `userId=${Number.value}; path=/;`;
+
+            window.location.href = "home.html";
+          } else {
+            pass_error.style.display = "block";
+            Password.style.border = "2px solid red";
+            Password.focus();
+            return false;
+          }
+        }
+        console.log("yes");
+        console.log(Number.value.length, Password.value.length);
+        // window.location.href = 'home.html';
+      }
+      function NumberVerify() {
+        console.log(Number.value.length);
+        if (Number.value.length == 10) {
+          Number.style.border = "1px solid black";
+          Number_error.style.display = "none";
+          return true;
+        }
+      }
+      function passVerify() {
+        console.log(Password.value.length);
+        if (Password.value.length >= 5) {
+          Password.style.border = "1px solid black";
+          pass_error.style.display = "none";
+          return true;
+        }
+      }
+    </script>
+  </body>
+</html>

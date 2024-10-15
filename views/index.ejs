@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Seat Booking</title>
+  </head>
+  <body>
+    <div class="seat-container">
+      <label> Select a Coach:</label>
+      <select id="ticket">
+        <option id="coach1" value="220"></option>
+        <option id="coach2" value="320"></option>
+        <option id="coach3" value="250"></option>
+        <option id="coach4" value="260"></option>
+        <option id="coach5" value="260"></option>
+        <option id="coach6" value="260"></option>
+      </select>
+    </div>
+
+    <ul class="showcase">
+      <li>
+        <div class="seat"></div>
+        <small>Available</small>
+      </li>
+      <li>
+        <div class="seat selected"></div>
+        <small>Selected</small>
+      </li>
+      <li>
+        <div class="seat sold"></div>
+        <small>Booked</small>
+      </li>
+    </ul>
+    <div class="containerSeat">
+      <div class="row">
+        <div class="seat" id="A1"></div>
+        <div class="seat" id="A2"></div>
+        <div class="seat" id="A3"></div>
+        <div class="seat" id="A4"></div>
+        <div class="seat" id="A5"></div>
+        <div class="seat" id="A6"></div>
+      </div>
+
+      <div class="row">
+        <div class="seat" id="B1"></div>
+        <div class="seat" id="B2"></div>
+        <div class="seat" id="B3"></div>
+        <div class="seat sold" id="B4"></div>
+        <div class="seat sold" id="B5"></div>
+        <div class="seat" id="B6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="C1"></div>
+        <div class="seat" id="C2"></div>
+        <div class="seat" id="C3"></div>
+        <div class="seat" id="C4"></div>
+        <div class="seat sold" id="C5"></div>
+        <div class="seat sold" id="C6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="D1"></div>
+        <div class="seat" id="D2"></div>
+        <div class="seat" id="D3"></div>
+        <div class="seat" id="D4"></div>
+        <div class="seat" id="D5"></div>
+        <div class="seat" id="D6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="E1"></div>
+        <div class="seat" id="E2"></div>
+        <div class="seat" id="E3"></div>
+        <div class="seat sold" id="E4"></div>
+        <div class="seat sold" id="E5"></div>
+        <div class="seat" id="E6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="F1"></div>
+        <div class="seat" id="F2"></div>
+        <div class="seat sold" id="F3"></div>
+        <div class="seat sold" id="F4"></div>
+        <div class="seat sold" id="F5"></div>
+        <div class="seat" id="F6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="G1"></div>
+        <div class="seat" id="G2"></div>
+        <div class="seat sold" id="G3"></div>
+        <div class="seat sold" id="G4"></div>
+        <div class="seat sold" id="G5"></div>
+        <div class="seat" id="G6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="H1"></div>
+        <div class="seat" id="H2"></div>
+        <div class="seat sold" id="H3"></div>
+        <div class="seat sold" id="H4"></div>
+        <div class="seat sold" id="H5"></div>
+        <div class="seat" id="H6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="I1"></div>
+        <div class="seat" id="I2"></div>
+        <div class="seat sold" id="I3"></div>
+        <div class="seat sold" id="I4"></div>
+        <div class="seat sold" id="I5"></div>
+        <div class="seat" id="I6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="J1"></div>
+        <div class="seat" id="J2"></div>
+        <div class="seat sold" id="J3"></div>
+        <div class="seat sold" id="J4"></div>
+        <div class="seat sold" id="J5"></div>
+        <div class="seat" id="J6"></div>
+      </div>
+      <div class="row">
+        <div class="seat" id="K1"></div>
+
+        <div class="seat" id="K2"></div>
+        <div class="seat sold" id="K3"></div>
+        <div class="seat sold" id="K4"></div>
+        <div class="seat sold" id="K5"></div>
+        <div class="seat" id="K6"></div>
+      </div>
+    </div>
+
+    <p class="text">
+      You have selected <span id="count">0</span> seat for a price of RS.<span
+        id="total"
+        >0</span
+      >
+    </p>
+    <script src=>
+ const container = document.querySelector(".containerSeat");
+      const seats = document.querySelectorAll(".row .seat:not(.sold)");
+      const count = document.getElementById("count");
+      const total = document.getElementById("total");
+      const seatSelect = document.getElementById("ticket");
+
+      document.getElementById("coach1").innerHTML = "KA";
+      document.getElementById("coach2").innerHTML = "KHA";
+      document.getElementById("coach3").innerHTML = "GHA";
+      document.getElementById("coach4").innerHTML = "NEO";
+      document.getElementById("coach5").innerHTML = "CHA";
+      document.getElementById("coach6").innerHTML = "JHA";
+
+      populateUI();
+
+      let ticketPrice = +seatSelect.value;
+
+      // Save selected Coach index and price
+      function setSeatData(coachIndex, ticketPrice) {
+        localStorage.setItem("selectedCoachIndex", coachIndex);
+        localStorage.setItem("selectedTicketPrice", ticketPrice);
+      }
+
+      // Update total and count
+      function updateSelectedCount() {
+        const selectedSeats = document.querySelectorAll(".row .seat.selected");
+
+        const seatsIndex = [...selectedSeats].map((seat) =>
+          [...seats].indexOf(seat)
+        );
+
+        localStorage.setItem("selectedSeats", JSON.stringify(seatsIndex));
+
+        const selectedSeatsCount = selectedSeats.length;
+
+        count.innerText = selectedSeatsCount;
+        total.innerText = selectedSeatsCount * ticketPrice;
+
+        setSeatData(seatSelect.selectedIndex, seatSelect.value);
+      }
+
+      // Get data from localstorage and populate UI
+      function populateUI() {
+        const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats"));
+
+        if (selectedSeats !== null && selectedSeats.length > 0) {
+          seats.forEach((seat, index) => {
+            if (selectedSeats.indexOf(index) > -1) {
+              console.log(seat.classList.add("selected"));
+            }
+          });
+        }
+
+        const selectedCoachIndex = localStorage.getItem("selectedCoachIndex");
+
+        if (selectedCoachIndex !== null) {
+          seatSelect.selectedIndex = selectedCoachIndex;
+          console.log(selectedCoachIndex);
+        }
+      }
+      console.log(populateUI());
+      // Coach select event
+      seatSelect.addEventListener("change", (e) => {
+        ticketPrice = +e.target.value;
+        setSeatData(e.target.selectedIndex, e.target.value);
+        updateSelectedCount();
+      });
+
+      // Seat click event
+      container.addEventListener("click", (e) => {
+        if (
+          e.target.classList.contains("seat") &&
+          !e.target.classList.contains("sold")
+        ) {
+          e.target.classList.toggle("selected");
+          updateSelectedCount();
+        }
+      });
+
+      //Initial count and total set
+      updateSelectedCount();
+
+    </script>
+  </body>
+</html>
+
+
+
+
+

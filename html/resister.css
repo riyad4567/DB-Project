@@ -1,0 +1,97 @@
+.register-bg {
+  background: #12c2e9;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9);
+  background-size: 100% 100%;
+}
+
+.regpage {
+  background: lightcyan;
+  width: 600px;
+  height: 460px;
+  margin: 100px auto;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  border-radius: 24px;
+  box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);
+}
+
+.regpage h1 {
+  padding: 10px 100px 0 100px;
+  font-weight: 300;
+  color: black;
+}
+
+.regpage .content {
+  padding: 10px 100px 0 100px;
+  text-align: center;
+}
+
+.regpage .input-field {
+  padding: 10px 10px;
+}
+
+.regpage .input-field input {
+  font-size: 16px;
+  display: block;
+  font-family: "Rubik", sans-serif;
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px solid black;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  outline: none;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.regpage .content #number_error,
+.regpage .content #password_error,
+.regpage .content #nid_error,
+.regpage .content #email_error {
+  width: 250px;
+  font-size: 18px;
+  color: red;
+  text-align: left;
+  margin-left: 10px;
+  display: none;
+}
+
+.regpage .button input {
+  width: 20%;
+  border: none;
+  padding: 10px;
+  font-family: "Rubik", sans-serif;
+  cursor: pointer;
+  margin-top: 25px;
+  background: darkgreen;
+  color: white;
+  font-size: 16px;
+  border-radius: 14px;
+  letter-spacing: 0.2px;
+  outline: 0;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.regpage .button button {
+  width: 20%;
+  border: none;
+  padding: 10px;
+  margin-top: 50px;
+  background: #10e450;
+  font-family: "Rubik", sans-serif;
+  cursor: pointer;
+  color: #10e450;
+  font-size: 16px;
+  border-radius: 14px;
+  letter-spacing: 0.2px;
+  outline: 0;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}

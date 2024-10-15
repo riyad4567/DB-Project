@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="history-bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History</title>
+
+    <link rel="stylesheet" href="./history.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <title>Document</title>
+    <style>
+      /* Your CSS styles here */
+      .ticket-details {
+        background-color: rgb(255, 225, 143);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <a href="index.html">Log Out</a>
+        <a href="accountinfo.html">Account Information</a>
+        <a href="Purchasehistory.html">History</a>
+        <a href="traininformation.html">Transport Information</a>
+        <a href="home.html">Home</a>
+      </nav>
+    </header>
+    <div
+      id="purchaseTable"
+      class="my-5 mx-1 mx-md-5 d-flex flex-column justify-content-center"
+    >
+      <h2 class="hisHead">My Purchase History</h2>
+      <div class="under"></div>
+      <table class="my-5 mx-auto" hover style="width: 98%">
+        <thead>
+          <tr class="row">
+            <th>#</th>
+            <th>Purchase ID</th>
+            <th>Train</th>
+            <th>Class</th>
+            <th>Date of Travel</th>
+            <th>Time of Purchase</th>
+            <th>TICKETID</th>
+          </tr>
+        </thead>
+        <tbody id="purchaseData">
+          <!-- Data will be populated here with JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // Sample data (replace with your actual data)
+
+      function getCookie(name) {
+        const cookieValue = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(name))
+          ?.split("=")[1];
+        return cookieValue;
+      }
+
+      // Function to populate the table with data
+      async function populateTable() {
+        const userId = getCookie("userId");
+        const FROM = getCookie("fromstation");
+        const TO = getCookie("tostation");
+        const DATE = getCookie("date");
+        console.log(DATE);
+        function getSeatBookingFromCookie() {
+          const cookieValue = getCookie("seatbook");
+          if (cookieValue) {
+            try {
+              return JSON.parse(decodeURIComponent(cookieValue));
+            } catch (error) {
+              console.error("Error parsing JSON from cookie:", error);
+            }
+          }
+          return null;
+        }
+
+        // Example: Retrieve the seat booking object from the "seatbook" cookie
+        const seatbook = getSeatBookingFromCookie();
+        const bookingstatus = getCookie("bookingstatus");
+        const result = await fetch("http://localhost:3020/purchasehistory", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            bookingstatus: bookingstatus,
+            FROM: FROM,
+            TO: TO,
+            DATE: DATE,
+            seatbook: seatbook,
+            userId: userId,
+          }),
+        });
+        const purcahsehistory = await result.json();
+
+        const groupedTickets = {};
+
+        for (const ticket of purcahsehistory) {
+          const purchaseId = ticket.PURCHASEID;
+          if (!groupedTickets[purchaseId]) {
+            groupedTickets[purchaseId] = [];
+          }
+          groupedTickets[purchaseId].push(ticket);
+        }
+
+        //console.log(groupedTickets);
+        const tbody = document.getElementById("purchaseData");
+
+        const distinctPurchases = [];
+
+        // Create an object to track seen PURCHASEIDs
+        const seenPurchaseIds = {};
+
+        // Iterate through the data and filter distinct purchases
+        for (const ticket of purcahsehistory) {
+          const purchaseId = ticket.PURCHASEID;
+          if (!seenPurchaseIds[purchaseId]) {
+            seenPurchaseIds[purchaseId] = true;
+            distinctPurchases.push({
+              PURCHASEID: purchaseId,
+              DATA: [ticket],
+            });
+          } else {
+            const existingPurchase = distinctPurchases.find(
+              (purchase) => purchase.PURCHASEID === purchaseId
+            );
+            existingPurchase.DATA.push(ticket);
+          }
+        }
+
+        distinctPurchases.forEach((p, i) => {
+          const row2 = document.createElement("tr");
+          row2.innerHTML = `<tr><br/> </tr>`;
+          tbody.appendChild(row2);
+          let k = 0;
+          groupedTickets[p.PURCHASEID].forEach((q, i) => {
+            const row = document.createElement("tr");
+
+            row.classList.add();
+            if (k == 0) {
+              row.innerHTML = `
+                   
+                    <td>${i + 1}</td>
+                    <td >
+                        <small style="font-size: 0.9rem; font-family:monospace; cursor:pointer"
+                            class='text-success text-decoration-underline' onclick="toggleTicketDetails(${i})">
+                            ${p.PURCHASEID}
+                        </small>
+                    </td>
+                    <td>${q.TRAIN_NAME}</td>
+                    <td>${q.CLASS}</td>
+                    <td>${printDate(q.JOURNEY_DATE)}</td>
+                    <td>${new Date(q.PURCHASEDATE).toLocaleString()}</td>
+                    <td colspan="8">
+                        Ticket ID: ${
+                          q.TICKETID
+                        } <!-- Add more ticket details here -->
+                    </td>
+                    <td>
+                      <i id=${p.PURCHASEID} class="fa-solid fa-file-pdf"></i>
+                      </td>
+
+
+
+                `;
+              k = 1;
+            } else {
+              row.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td >
+                        <small style="font-size: 0.9rem; font-family:monospace; cursor:pointer"
+                            class='text-success text-decoration-underline' onclick="toggleTicketDetails(${i})">
+                            ${p.PURCHASEID}
+                        </small>
+                    </td>
+                    <td>${q.TRAIN_NAME}</td>
+                    <td>${q.CLASS}</td>
+                    <td>${printDate(q.JOURNEY_DATE)}</td>
+                    <td>${new Date(q.PURCHASEDATE).toLocaleString()}</td>
+                    <td colspan="8">
+                        Ticket ID: ${
+                          q.TICKETID
+                        } <!-- Add more ticket details here -->
+                    </td>
+`;
+            }
+
+            tbody.appendChild(row);
+          });
+
+          // Initially hide the details row
+        });
+        document.addEventListener("click", async (event) => {
+          //document.console.log(event.target.id);
+          document.cookie = `purchaseid=${event.target.id}; path=/;`;
+          window.location.href = "ticket.html";
+        });
+      }
+
+      // Function to toggle ticket details visibility
+      function toggleTicketDetails(index) {
+        const detailsRow = document.getElementById(`ticketDetails_${index}`);
+        detailsRow.style.display =
+          detailsRow.style.display === "none" ? "table-row" : "none";
+      }
+
+      // Function to format date
+      function printDate(date) {
+        const d = new Date(date);
+        return `${d.toDateString().substring(4)}`;
+      }
+
+      // Call the populateTable function to populate the table
+      populateTable();
+    </script>
+  </body>
+</html>
